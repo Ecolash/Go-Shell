@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -85,6 +86,12 @@ func applyRedirections(redirs []*Redirection, cmd *exec.Cmd) {
 	for _, r := range redirs {
 		var f *os.File
 		var err error
+		dir := filepath.Dir(r.File)
+		err = os.MkdirAll(dir, 0755)
+		if err != nil {
+			fmt.Println("mkdir err:", err)
+			return
+		}
 		if r.Append {
 			f, err = os.OpenFile(r.File, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 		} else {
