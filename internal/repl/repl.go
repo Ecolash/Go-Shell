@@ -41,7 +41,6 @@ func Start() {
 			fmt.Println("parse error:", err)
 			continue
 		}
-
 		exec.Run(command)
 	}
 }
