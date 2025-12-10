@@ -20,17 +20,30 @@ var builtinNames = []string{
 
 type builtinCompleter struct{}
 
-func (c *builtinCompleter) Do(line []rune, _ int) (newLine [][]rune, length int) {
+func (c *builtinCompleter) Do(line []rune, _ int) ([][]rune, int) {
 	prefix := string(line)
-	var results [][]rune
+	var matches []string
+
 	for _, b := range builtinNames {
 		if strings.HasPrefix(b, prefix) {
-			results = append(results, []rune(b))
+			matches = append(matches, b)
 		}
 	}
-	if len(results) == 0 {
+
+	if len(matches) == 0 {
 		fmt.Print("\x07")
+		return nil, 0
 	}
 
+	if len(matches) == 1 {
+		match := matches[0]
+		missing := match[len(prefix):] + " "
+		return [][]rune{[]rune(missing)}, len(prefix)
+	}
+
+	results := make([][]rune, len(matches))
+	for i, m := range matches {
+		results[i] = []rune(m)
+	}
 	return results, len(prefix)
 }
