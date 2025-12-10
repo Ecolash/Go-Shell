@@ -2,6 +2,14 @@ package parser
 
 import "strings"
 
+var doubleQuoteEscapes = map[byte]bool{
+	'"':  true,
+	'\\': true,
+	'$':  true,
+	'`':  true,
+	'\n': true,
+}
+
 func Lex(input string) []string {
 	var tokens []string
 	var current strings.Builder
@@ -16,7 +24,17 @@ func Lex(input string) []string {
 			if i+1 == len(input) {
 				continue
 			}
-			if inSingleQuote || inDoubleQuote {
+			if inSingleQuote {
+				current.WriteByte(c)
+				continue
+			}
+			if inDoubleQuote {
+				next := input[i+1]
+				if doubleQuoteEscapes[next] {
+					current.WriteByte(next)
+					i = i + 1
+					continue
+				}
 				current.WriteByte(c)
 				continue
 			}
