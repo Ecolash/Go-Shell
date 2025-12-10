@@ -51,13 +51,30 @@ func loadPathExecutables() []string {
 	return out
 }
 
+func longestCommonPrefix(strs []string) string {
+	if len(strs) == 0 {
+		return ""
+	}
+	prefix := strs[0]
+	for _, s := range strs[1:] {
+		i := 0
+		for i < len(prefix) && i < len(s) && prefix[i] == s[i] {
+			i++
+		}
+		prefix = prefix[:i]
+		if prefix == "" {
+			break
+		}
+	}
+	return prefix
+}
+
 func (c *builtinCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	prefix := string(line[:pos])
 	if prefix != c.lastPrefix {
 		c.tabCount = 0
 	}
 	c.lastPrefix = prefix
-
 	var matches []string
 	for _, b := range builtinNames {
 		if strings.HasPrefix(b, prefix) {
@@ -74,8 +91,9 @@ func (c *builtinCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		fmt.Print("\a")
 		return nil, pos
 	}
-
 	sort.Strings(matches)
+
+	// 1) SINGLE MATCH → normal completion
 	if len(matches) == 1 {
 		c.tabCount = 0
 		match := matches[0]
@@ -83,6 +101,14 @@ func (c *builtinCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		return [][]rune{[]rune(suffix)}, pos
 	}
 
+	// 2) MULTIPLE MATCHES → compute LCP
+	lcp := longestCommonPrefix(matches)
+	if len(lcp) > len(prefix) {
+		suffix := lcp[len(prefix):]
+		return [][]rune{[]rune(suffix)}, pos
+	}
+
+	// 3) LCP == prefix → no more autocomplete possible
 	c.tabCount++
 	if c.tabCount == 1 {
 		fmt.Print("\a")
@@ -92,6 +118,6 @@ func (c *builtinCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	c.tabCount = 0
 	fmt.Println()
 	fmt.Println(strings.Join(matches, "  "))
-	fmt.Printf("$ %s", prefix)
+	fmt.Println()
 	return nil, pos
 }
