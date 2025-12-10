@@ -21,7 +21,10 @@ var builtinNames = []string{
 	exec.BuiltinType,
 }
 
-type builtinCompleter struct{}
+type builtinCompleter struct {
+	lastPrefix string
+	tabCount   int
+}
 
 func loadPathExecutables() []string {
 	path := os.Getenv("PATH")
@@ -50,6 +53,14 @@ func loadPathExecutables() []string {
 
 func (c *builtinCompleter) Do(line []rune, _ int) ([][]rune, int) {
 	prefix := string(line)
+
+	// reset tabCount when prefix changes
+	if prefix != c.lastPrefix {
+		c.tabCount = 0
+	}
+	c.lastPrefix = prefix
+
+	// gather matching names
 	var matches []string
 	for _, b := range builtinNames {
 		if strings.HasPrefix(b, prefix) {
@@ -61,19 +72,36 @@ func (c *builtinCompleter) Do(line []rune, _ int) ([][]rune, int) {
 			matches = append(matches, b)
 		}
 	}
+
 	if len(matches) == 0 {
-		fmt.Print("\x07") // Bell sound
+		fmt.Print("\a")
 		return nil, 0
 	}
+
 	sort.Strings(matches)
+
+	// if only one completion → autocomplete fully
 	if len(matches) == 1 {
-		match := matches[0] + " "
-		return [][]rune{[]rune(match)}, len(prefix)
+		c.tabCount = 0
+		return [][]rune{[]rune(matches[0] + " ")}, len(prefix)
 	}
 
-	results := make([][]rune, len(matches))
-	for i, m := range matches {
-		results[i] = []rune(m)
+	// multiple matches case
+	c.tabCount++
+
+	if c.tabCount == 1 {
+		// first tab → ring bell
+		fmt.Print("\a")
+		return nil, len(prefix)
 	}
-	return results, len(prefix)
+
+	// second tab → print all
+	c.tabCount = 0
+
+	builder := strings.Join(matches, "  ") // two spaces
+
+	// print results and restore prompt + buffer
+	fmt.Printf("\n%s\n$ %s", builder, prefix)
+
+	return nil, len(prefix)
 }
