@@ -14,7 +14,7 @@ func Start() {
 		Prompt:          "$ ",
 		InterruptPrompt: "^C",
 		EOFPrompt:       "exit",
-		HistoryFile:     "/tmp/shell_history.tmp",
+		HistoryFile:     "/tmp/my_shell_history.tmp",
 		AutoComplete:    &builtinCompleter{},
 	})
 	if err != nil {

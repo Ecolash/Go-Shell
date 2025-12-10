@@ -53,14 +53,11 @@ func loadPathExecutables() []string {
 
 func (c *builtinCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	prefix := string(line[:pos])
-
-	// Reset tab counter if prefix changed
 	if prefix != c.lastPrefix {
 		c.tabCount = 0
 	}
 	c.lastPrefix = prefix
 
-	// Gather matches
 	var matches []string
 	for _, b := range builtinNames {
 		if strings.HasPrefix(b, prefix) {
@@ -73,41 +70,28 @@ func (c *builtinCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		}
 	}
 
-	// No matches
 	if len(matches) == 0 {
 		fmt.Print("\a")
 		return nil, pos
 	}
 
 	sort.Strings(matches)
-
-	// One match → replace prefix fully
 	if len(matches) == 1 {
 		c.tabCount = 0
-		match := matches[0] + " "
-		// Replace the characters from 0..pos
-		return [][]rune{[]rune(match)}, pos
+		match := matches[0]
+		suffix := match[len(prefix):] + " "
+		return [][]rune{[]rune(suffix)}, pos
 	}
 
-	// Multiple matches
 	c.tabCount++
-
-	// First tab → bell only
 	if c.tabCount == 1 {
 		fmt.Print("\a")
 		return nil, pos
 	}
 
-	// Second tab → print list, redraw prompt
 	c.tabCount = 0
-
-	// Print list of matches on new line
 	fmt.Println()
 	fmt.Println(strings.Join(matches, "  "))
-
-	// Redraw prompt and prefix manually
-	fmt.Printf("$ %s", prefix)
-
-	// Do NOT modify buffer; readline keeps old content
+	fmt.Println()
 	return nil, pos
 }
