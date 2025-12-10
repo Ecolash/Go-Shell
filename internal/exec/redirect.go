@@ -15,6 +15,15 @@ type Redirection struct {
 	Append bool   // true for >>
 }
 
+func stripQuotes(s string) string {
+	if len(s) >= 2 {
+		if (s[0] == '"' && s[len(s)-1] == '"') || (s[0] == '\'' && s[len(s)-1] == '\'') {
+			return s[1 : len(s)-1]
+		}
+	}
+	return s
+}
+
 func parseRedirections(args []string) ([]string, []*Redirection) {
 	var newArgs []string
 	var redirs []*Redirection
@@ -33,19 +42,19 @@ func parseRedirections(args []string) ([]string, []*Redirection) {
 				fd = 2
 			}
 			file = args[i+1]
+			file = stripQuotes(file)
 			isAppend = false
 			matched = true
-			i = i + 1
-			continue
-		}
-
-		if strings.HasPrefix(arg, ">>") {
+			i = i + 2
+		} else if strings.HasPrefix(arg, ">>") {
 			fd = 1
 			isAppend = true
 			if len(arg) > 2 {
 				file = arg[2:]
+				file = stripQuotes(file)
 			} else if i+1 < len(args) {
 				file = args[i+1]
+				file = stripQuotes(file)
 				i++
 			} else {
 				fmt.Println("syntax error near unexpected token `newline`")
@@ -57,8 +66,10 @@ func parseRedirections(args []string) ([]string, []*Redirection) {
 			isAppend = false
 			if len(arg) > 1 {
 				file = arg[1:]
+				file = stripQuotes(file)
 			} else if i+1 < len(args) {
 				file = args[i+1]
+				file = stripQuotes(file)
 				i++
 			} else {
 				fmt.Println("syntax error near unexpected token `newline`")
@@ -70,6 +81,7 @@ func parseRedirections(args []string) ([]string, []*Redirection) {
 			if len(parts) == 2 {
 				fd, _ = strconv.Atoi(parts[0])
 				file = parts[1]
+				file = stripQuotes(file)
 				isAppend = true
 				matched = true
 			}
@@ -78,6 +90,7 @@ func parseRedirections(args []string) ([]string, []*Redirection) {
 			if len(parts) == 2 {
 				fd, _ = strconv.Atoi(parts[0])
 				file = parts[1]
+				file = stripQuotes(file)
 				isAppend = false
 				matched = true
 			}
