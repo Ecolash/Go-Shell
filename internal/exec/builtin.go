@@ -1,10 +1,6 @@
 package exec
 
 import (
-	"fmt"
-	"os"
-	"strings"
-
 	"github.com/codecrafters-io/shell-starter-go/internal/parser"
 )
 
@@ -43,27 +39,11 @@ func builtin(cmd *parser.Command) bool {
 	//	return true
 
 	case BuiltinEcho:
-		fmt.Println(strings.Join(cmd.Args, " "))
-		return true
-
+		return doEcho(cmd.Args)
 	case BuiltinExit:
-		os.Exit(0)
-		return true
-
+		return doExit(cmd.Args)
 	case BuiltinType:
-		args := cmd.Args
-		if len(args) == 0 {
-			fmt.Println("type: missing argument")
-			return true
-		}
-		for _, word := range args {
-			if Builtins[word] {
-				fmt.Printf("%s is a shell builtin\n", word)
-				continue
-			}
-			fmt.Printf("%s: not found\n", word)
-		}
-		return true
+		return doType(cmd.Args)
 	}
 	return false
 }
