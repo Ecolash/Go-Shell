@@ -36,7 +36,7 @@ func parseRedirections(args []string) ([]string, []*Redirection) {
 		var file string
 		matched := false
 
-		if (arg == ">" || arg == "1>" || arg == "2>") && i+1 < len(args) {
+		if (arg == ">" || arg == "1>" || arg == "2>" || arg == "1>>" || arg == "2>>") && i+1 < len(args) {
 			fd = 1
 			if arg == "2>" {
 				fd = 2

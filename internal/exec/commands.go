@@ -9,6 +9,8 @@ import (
 
 func doEcho(args []string) bool {
 	args, redirs := parseRedirections(args)
+	//fmt.Println(args)
+	//fmt.Println(redirs[0].File)
 	c := &exec.Cmd{
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
@@ -16,7 +18,7 @@ func doEcho(args []string) bool {
 	applyRedirections(redirs, c)
 	_, err := fmt.Fprintln(c.Stdout, strings.Join(args, " "))
 	if err != nil {
-		_, _ = fmt.Fprintln(c.Stderr, err)
+		_, _ = fmt.Fprintln(c.Stderr, "err")
 		return false
 	}
 	return true
