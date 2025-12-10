@@ -118,6 +118,6 @@ func (c *builtinCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	c.tabCount = 0
 	fmt.Println()
 	fmt.Println(strings.Join(matches, "  "))
-	fmt.Println()
+	fmt.Printf("$ %s", prefix)
 	return nil, pos
 }
