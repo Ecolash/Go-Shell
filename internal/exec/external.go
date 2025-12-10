@@ -1,7 +1,6 @@
 package exec
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 
@@ -16,7 +15,7 @@ func external(cmd *parser.Command, redirs []*Redirection) bool {
 	applyRedirections(redirs, c)
 
 	if err := c.Run(); err != nil {
-		fmt.Println("error executing:", err)
+		//fmt.Println("error executing:", err)
 	}
 	return true
 }
