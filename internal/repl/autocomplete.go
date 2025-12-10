@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/codecrafters-io/shell-starter-go/internal/exec"
@@ -50,28 +51,24 @@ func loadPathExecutables() []string {
 func (c *builtinCompleter) Do(line []rune, _ int) ([][]rune, int) {
 	prefix := string(line)
 	var matches []string
-
 	for _, b := range builtinNames {
 		if strings.HasPrefix(b, prefix) {
 			matches = append(matches, b)
 		}
 	}
-
 	for _, b := range loadPathExecutables() {
 		if strings.HasPrefix(b, prefix) {
 			matches = append(matches, b)
 		}
 	}
-
 	if len(matches) == 0 {
-		fmt.Print("\x07")
+		fmt.Print("\x07") // Bell sound
 		return nil, 0
 	}
-
+	sort.Strings(matches)
 	if len(matches) == 1 {
-		match := matches[0]
-		missing := match[len(prefix):] + " "
-		return [][]rune{[]rune(missing)}, len(prefix)
+		match := matches[0] + " "
+		return [][]rune{[]rune(match)}, len(prefix)
 	}
 
 	results := make([][]rune, len(matches))
