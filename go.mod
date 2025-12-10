@@ -2,9 +2,6 @@ module github.com/codecrafters-io/shell-starter-go
 
 go 1.25.0
 
-require github.com/peterh/liner v1.2.2
+require github.com/chzyer/readline v1.5.1
 
-require (
-	github.com/mattn/go-runewidth v0.0.3 // indirect
-	golang.org/x/sys v0.0.0-20211117180635-dee7805ff2e1 // indirect
-)
+require golang.org/x/sys v0.0.0-20220310020820-b874c991c1a5 // indirect
