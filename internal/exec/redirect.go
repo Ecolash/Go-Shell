@@ -36,6 +36,7 @@ func parseRedirections(args []string) ([]string, []*Redirection) {
 			isAppend = false
 			matched = true
 			i = i + 1
+			continue
 		}
 
 		if strings.HasPrefix(arg, ">>") {
