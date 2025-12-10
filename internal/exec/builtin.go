@@ -16,7 +16,19 @@ const (
 	BuiltinSet   = "set"
 	BuiltinUnset = "unset"
 	BuiltinEnv   = "env"
+	BuiltinType  = "type"
 )
+
+var Builtins = map[string]bool{
+	BuiltinCD:    true,
+	BuiltinExit:  true,
+	BuiltinPWD:   true,
+	BuiltinEcho:  true,
+	BuiltinSet:   true,
+	BuiltinUnset: true,
+	BuiltinEnv:   true,
+	BuiltinType:  true,
+}
 
 func builtin(cmd *parser.Command) bool {
 	switch cmd.Name {
@@ -36,6 +48,21 @@ func builtin(cmd *parser.Command) bool {
 
 	case BuiltinExit:
 		os.Exit(0)
+		return true
+
+	case BuiltinType:
+		args := cmd.Args
+		if len(args) == 0 {
+			fmt.Println("type: missing argument")
+			return true
+		}
+		for _, word := range args {
+			if Builtins[word] {
+				fmt.Printf("%s is a shell builtin\n", word)
+				continue
+			}
+			fmt.Printf("%s: not found\n", word)
+		}
 		return true
 	}
 	return false
