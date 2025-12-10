@@ -1,6 +1,8 @@
 package parser
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func Parse(input string) (*Command, error) {
 	tokens := Lex(input)

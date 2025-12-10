@@ -1,22 +1,44 @@
 package parser
 
+import "strings"
+
 func Lex(input string) []string {
 	var tokens []string
-	current := ""
+	var current strings.Builder
+	inSingleQuote := false
+	inDoubleQuote := false
 
-	for _, c := range input {
-		if c == ' ' || c == '\n' || c == '\t' {
-			if current != "" {
-				tokens = append(tokens, current)
-				current = ""
+	for i := 0; i < len(input); i++ {
+		c := input[i]
+
+		switch c {
+		case ' ':
+			if inSingleQuote || inDoubleQuote {
+				current.WriteByte(c)
+			} else if current.Len() > 0 {
+				tokens = append(tokens, current.String())
+				current.Reset()
 			}
-			continue
+		case '\'':
+			if inDoubleQuote {
+				current.WriteByte(c)
+			} else {
+				inSingleQuote = !inSingleQuote
+			}
+		case '"':
+			if inSingleQuote {
+				current.WriteByte(c)
+			} else {
+				inDoubleQuote = !inDoubleQuote
+			}
+		default:
+			current.WriteByte(c)
 		}
-		current += string(c)
 	}
 
-	if current != "" {
-		tokens = append(tokens, current)
+	if current.Len() > 0 {
+		tokens = append(tokens, current.String())
 	}
+
 	return tokens
 }
