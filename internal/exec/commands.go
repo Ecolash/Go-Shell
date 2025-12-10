@@ -39,3 +39,28 @@ func doType(args []string) bool {
 	}
 	return true
 }
+
+func doPwd(args []string) bool {
+	if len(args) == 0 {
+		cwd, err := os.Getwd()
+		if err != nil {
+			fmt.Println("pwd: error getting current directory:", err)
+			return true
+		}
+
+		fmt.Println(cwd)
+		return true
+	}
+	return false
+}
+
+func doCd(args []string) bool {
+	if len(args) == 0 {
+		fmt.Println("cd: missing argument")
+		return true
+	}
+	if err := os.Chdir(args[0]); err != nil {
+		fmt.Println("cd error:", err)
+	}
+	return true
+}

@@ -28,22 +28,16 @@ var Builtins = map[string]bool{
 
 func builtin(cmd *parser.Command) bool {
 	switch cmd.Name {
-	//case BuiltinCD:
-	//	if len(cmd.Args) == 0 {
-	//		fmt.Println("cd: missing argument")
-	//		return true
-	//	}
-	//	if err := os.Chdir(cmd.Args[0]); err != nil {
-	//		fmt.Println("cd error:", err)
-	//	}
-	//	return true
-
+	case BuiltinCD:
+		return doCd(cmd.Args)
 	case BuiltinEcho:
 		return doEcho(cmd.Args)
 	case BuiltinExit:
 		return doExit(cmd.Args)
 	case BuiltinType:
 		return doType(cmd.Args)
+	case BuiltinPWD:
+		return doPwd(cmd.Args)
 	}
 	return false
 }
