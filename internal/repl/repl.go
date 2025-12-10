@@ -15,7 +15,7 @@ func Start() {
 		InterruptPrompt: "^C",
 		EOFPrompt:       "exit",
 		HistoryFile:     "/tmp/shell_history.tmp",
-		AutoComplete:    readline.NewPrefixCompleter(buildCompleters()...),
+		AutoComplete:    &builtinCompleter{},
 	})
 	if err != nil {
 		fmt.Println("Failed to initialize readline:", err)

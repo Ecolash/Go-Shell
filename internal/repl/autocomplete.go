@@ -2,8 +2,8 @@ package repl
 
 import (
 	"fmt"
+	"strings"
 
-	"github.com/chzyer/readline"
 	"github.com/codecrafters-io/shell-starter-go/internal/exec"
 )
 
@@ -18,13 +18,19 @@ var builtinNames = []string{
 	exec.BuiltinType,
 }
 
-func buildCompleters() []readline.PrefixCompleterInterface {
-	var completers []readline.PrefixCompleterInterface
+type builtinCompleter struct{}
+
+func (c *builtinCompleter) Do(line []rune, _ int) (newLine [][]rune, length int) {
+	prefix := string(line)
+	var results [][]rune
 	for _, b := range builtinNames {
-		completers = append(completers, readline.PcItem(b))
+		if strings.HasPrefix(b, prefix) {
+			results = append(results, []rune(b))
+		}
 	}
-	if len(completers) == 0 {
-		fmt.Print("\x07") // beep to alert user
+	if len(results) == 0 {
+		fmt.Print("\x07")
 	}
-	return completers
+
+	return results, len(prefix)
 }
