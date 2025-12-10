@@ -27,6 +27,17 @@ func parseRedirections(args []string) ([]string, []*Redirection) {
 		var file string
 		matched := false
 
+		if (arg == ">" || arg == "1>" || arg == "2>") && i+1 < len(args) {
+			fd = 1
+			if arg == "2>" {
+				fd = 2
+			}
+			file = args[i+1]
+			isAppend = false
+			matched = true
+			i = i + 1
+		}
+
 		if strings.HasPrefix(arg, ">>") {
 			fd = 1
 			isAppend = true
