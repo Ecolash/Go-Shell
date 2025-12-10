@@ -51,16 +51,16 @@ func loadPathExecutables() []string {
 	return out
 }
 
-func (c *builtinCompleter) Do(line []rune, _ int) ([][]rune, int) {
-	prefix := string(line)
+func (c *builtinCompleter) Do(line []rune, pos int) ([][]rune, int) {
+	prefix := string(line[:pos])
 
-	// reset tabCount when prefix changes
+	// Reset tab counter if prefix changed
 	if prefix != c.lastPrefix {
 		c.tabCount = 0
 	}
 	c.lastPrefix = prefix
 
-	// gather matching names
+	// Gather matches
 	var matches []string
 	for _, b := range builtinNames {
 		if strings.HasPrefix(b, prefix) {
@@ -73,35 +73,41 @@ func (c *builtinCompleter) Do(line []rune, _ int) ([][]rune, int) {
 		}
 	}
 
+	// No matches
 	if len(matches) == 0 {
 		fmt.Print("\a")
-		return nil, 0
+		return nil, pos
 	}
 
 	sort.Strings(matches)
 
-	// if only one completion → autocomplete fully
+	// One match → replace prefix fully
 	if len(matches) == 1 {
 		c.tabCount = 0
-		return [][]rune{[]rune(matches[0] + " ")}, len(prefix)
+		match := matches[0] + " "
+		// Replace the characters from 0..pos
+		return [][]rune{[]rune(match)}, pos
 	}
 
-	// multiple matches case
+	// Multiple matches
 	c.tabCount++
 
+	// First tab → bell only
 	if c.tabCount == 1 {
-		// first tab → ring bell
 		fmt.Print("\a")
-		return nil, len(prefix)
+		return nil, pos
 	}
 
-	// second tab → print all
+	// Second tab → print list, redraw prompt
 	c.tabCount = 0
 
-	builder := strings.Join(matches, "  ") // two spaces
+	// Print list of matches on new line
+	fmt.Println()
+	fmt.Println(strings.Join(matches, "  "))
 
-	// print results and restore prompt + buffer
-	fmt.Printf("\n%s\n$ %s", builder, prefix)
+	// Redraw prompt and prefix manually
+	fmt.Printf("$ %s", prefix)
 
-	return nil, len(prefix)
+	// Do NOT modify buffer; readline keeps old content
+	return nil, pos
 }
