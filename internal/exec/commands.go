@@ -16,7 +16,7 @@ func doEcho(args []string) bool {
 	applyRedirections(redirs, c)
 	_, err := fmt.Fprintln(c.Stdout, strings.Join(args, " "))
 	if err != nil {
-		fmt.Println(err)
+		_, _ = fmt.Fprintln(c.Stderr, err)
 		return false
 	}
 	return true
