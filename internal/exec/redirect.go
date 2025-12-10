@@ -43,7 +43,7 @@ func parseRedirections(args []string) ([]string, []*Redirection) {
 			}
 			file = args[i+1]
 			file = stripQuotes(file)
-			isAppend = false
+			isAppend = strings.Contains(arg, ">>")
 			matched = true
 			i = i + 2
 		} else if strings.HasPrefix(arg, ">>") {
