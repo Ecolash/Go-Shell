@@ -12,6 +12,17 @@ func Lex(input string) []string {
 		c := input[i]
 
 		switch c {
+		case '\\':
+			if i+1 == len(input) {
+				continue
+			}
+			if inSingleQuote || inDoubleQuote {
+				current.WriteByte(c)
+				continue
+			}
+			c := input[i+1]
+			current.WriteByte(c)
+			i = i + 1
 		case ' ':
 			if inSingleQuote || inDoubleQuote {
 				current.WriteByte(c)
