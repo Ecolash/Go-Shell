@@ -12,9 +12,12 @@ func Run(cmd *parser.Command) {
 		return
 	}
 	_, err := exec.LookPath(cmd.Name)
+	args, redirs := parseRedirections(cmd.Args)
+	cmd.Args = args
+
 	if err != nil {
 		fmt.Println(cmd.Name + ": command not found")
 		return
 	}
-	external(cmd)
+	external(cmd, redirs)
 }

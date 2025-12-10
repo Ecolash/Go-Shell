@@ -8,7 +8,17 @@ import (
 )
 
 func doEcho(args []string) bool {
-	fmt.Println(strings.Join(args, " "))
+	args, redirs := parseRedirections(args)
+	c := &exec.Cmd{
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+	}
+	applyRedirections(redirs, c)
+	_, err := fmt.Fprintln(c.Stdout, strings.Join(args, " "))
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
 	return true
 }
 

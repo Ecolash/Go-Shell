@@ -10,6 +10,7 @@ import (
 	"github.com/codecrafters-io/shell-starter-go/internal/parser"
 )
 
+// Start REPL: Read–Eval–Print Loop
 func Start() {
 	for {
 		fmt.Print("$ ")
