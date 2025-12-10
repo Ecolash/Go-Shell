@@ -59,7 +59,17 @@ func doCd(args []string) bool {
 		fmt.Println("cd: missing argument")
 		return true
 	}
-	if err := os.Chdir(args[0]); err != nil {
+	dir := args[0]
+	if args[0] == "~" { // ~ → home
+		home, err := os.UserHomeDir()
+		if err != nil {
+			fmt.Println("cd: cannot determine home directory:", err)
+			return true
+		}
+		dir = home
+	}
+	err := os.Chdir(dir)
+	if err != nil {
 		fmt.Println("cd:", strings.TrimSpace(args[0])+": No such file or directory")
 	}
 	return true
