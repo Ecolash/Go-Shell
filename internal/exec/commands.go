@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 )
 
@@ -89,8 +90,15 @@ func doCd(args []string) bool {
 
 func doHistory(args []string) bool {
 	if len(args) == 0 {
-		printHistory()
+		printHistory(-1)
 		return true
 	}
-	return false
+	nStr := args[0]
+	n, err := strconv.Atoi(nStr)
+	if err != nil || n < 0 {
+		fmt.Printf("history: %s: numeric argument required\n", nStr)
+		return true
+	}
+	printHistory(n)
+	return true
 }
