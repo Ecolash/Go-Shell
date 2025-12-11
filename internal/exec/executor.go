@@ -35,34 +35,70 @@ func runSingleCommand(cmd *parser.Command) {
 
 func runPipeline(p *parser.Pipeline) {
 	n := len(p.Commands)
-	procs := make([]*exec.Cmd, n)
 	pipes := make([][2]*os.File, n-1)
-	for i, c := range p.Commands {
-		procs[i] = exec.Command(c.Name, c.Args...)
-		procs[i].Stderr = os.Stderr
-	}
-
 	for i := 0; i < n-1; i++ {
-		r, w, _ := os.Pipe()
+		r, w, err := os.Pipe()
+		if err != nil {
+			fmt.Println("pipe error:", err)
+			return
+		}
 		pipes[i] = [2]*os.File{r, w}
-		procs[i].Stdout = w  // left -> write
-		procs[i+1].Stdin = r // right <- read
 	}
 
-	procs[0].Stdin = os.Stdin
-	procs[n-1].Stdout = os.Stdout
-	for i := 0; i < n; i++ {
-		_ = procs[i].Start()
+	getIO := func(i int) (stdin *os.File, stdout *os.File) {
+		switch i {
+		case 0:
+			stdin = os.Stdin
+		default:
+			stdin = pipes[i-1][0]
+		}
+		switch i {
+		case n - 1:
+			stdout = os.Stdout
+		default:
+			stdout = pipes[i][1]
+		}
+		return
 	}
 
-	// Parent closes pipes
-	for i := 0; i < n-1; i++ {
-		_ = pipes[i][0].Close()
-		_ = pipes[i][1].Close()
-	}
+	var process []*exec.Cmd
+	for i, c := range p.Commands {
+		stdin, stdout := getIO(i)
+		// BUILTIN handling
+		if Builtins[c.Name] {
+			if c.Name == BuiltinCD || c.Name == BuiltinExit {
+				fmt.Printf("%s: not allowed in pipeline\n", c.Name)
+				return
+			}
+			origStdin := os.Stdin
+			origStdout := os.Stdout
+			os.Stdin = stdin
+			os.Stdout = stdout
+			builtin(c)
 
-	_ = procs[n-1].Wait()
-	for i := 0; i < n-1; i++ {
-		_ = procs[i].Wait()
+			os.Stdin = origStdin
+			os.Stdout = origStdout
+			continue
+		}
+
+		// EXTERNAL command
+		cmd := exec.Command(c.Name, c.Args...)
+		cmd.Stdin = stdin
+		cmd.Stdout = stdout
+		cmd.Stderr = os.Stderr
+
+		if err := cmd.Start(); err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		process = append(process, cmd)
+	}
+	for _, p := range pipes {
+		_ = p[0].Close()
+		_ = p[1].Close()
+	}
+	for _, cmd := range process {
+		_ = cmd.Wait()
 	}
 }
