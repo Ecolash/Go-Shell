@@ -92,13 +92,29 @@ func doHistory(args []string) bool {
 	if len(args) == 0 {
 		printHistory(-1)
 		return true
-	}
-	nStr := args[0]
-	n, err := strconv.Atoi(nStr)
-	if err != nil || n < 0 {
-		fmt.Printf("history: %s: numeric argument required\n", nStr)
+	} else if len(args) == 2 {
+		flag := args[0]
+		path := args[1]
+		switch flag {
+		case "-r":
+			readHistory(path)
+		case "-w":
+			writeHistory(path)
+		case "-a":
+			appendHistory(path)
+		default:
+			fmt.Println("history: invalid option:", flag)
+		}
+		return true
+	} else if len(args) == 1 {
+		nStr := args[0]
+		n, err := strconv.Atoi(nStr)
+		if err != nil || n < 0 {
+			fmt.Printf("history: %s: numeric argument required\n", nStr)
+			return true
+		}
+		printHistory(n)
 		return true
 	}
-	printHistory(n)
-	return true
+	return false
 }
