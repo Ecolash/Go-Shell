@@ -23,7 +23,7 @@ func printHistory(n int) {
 	}
 }
 
-func readHistory(path string) {
+func ReadHistory(path string) {
 	f, err := os.Open(path)
 	if err != nil {
 		// Bash behavior: history -r silently ignores missing file

@@ -97,7 +97,7 @@ func doHistory(args []string) bool {
 		path := args[1]
 		switch flag {
 		case "-r":
-			readHistory(path)
+			ReadHistory(path)
 		case "-w":
 			writeHistory(path)
 		case "-a":

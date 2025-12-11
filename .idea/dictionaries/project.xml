@@ -2,6 +2,7 @@
   <dictionary name="project">
     <words>
       <w>completers</w>
+      <w>histfile</w>
       <w>redirs</w>
     </words>
   </dictionary>

@@ -10,12 +10,13 @@ import (
 )
 
 func Start() {
+	SetupHistory()
 	rl, err := readline.NewEx(&readline.Config{
 		Prompt:          "$ ",
 		InterruptPrompt: "^C",
 		EOFPrompt:       "exit",
-		HistoryFile:     "/tmp/my_shell_history.tmp",
 		AutoComplete:    &builtinCompleter{},
+		// HistoryFile:  "/tmp/my_shell_history.tmp",
 	})
 	if err != nil {
 		fmt.Println("Failed to initialize readline:", err)
