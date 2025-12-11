@@ -40,7 +40,9 @@ func Start() {
 			fmt.Println("parse error:", err)
 			continue
 		}
+		if command == exec.BuiltinExit {
+			UpdateHistory()
+		}
 		exec.Run(command)
 	}
-	UpdateHistory()
 }
