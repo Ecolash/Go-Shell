@@ -10,18 +10,6 @@ import (
 	"github.com/codecrafters-io/shell-starter-go/internal/parser"
 )
 
-func formatPrompt() string {
-	cwd, err := os.Getwd()
-	if err != nil {
-		cwd = "?"
-	}
-	home := os.Getenv("HOME")
-	if home != "" && strings.HasPrefix(cwd, home) {
-		cwd = "~" + strings.TrimPrefix(cwd, home)
-	}
-	return fmt.Sprintf("%s $ ", cwd)
-}
-
 func Start() {
 	histfile := os.Getenv("HISTFILE")
 	if histfile == "" {
