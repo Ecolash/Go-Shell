@@ -2,6 +2,7 @@ package repl
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/chzyer/readline"
@@ -10,13 +11,16 @@ import (
 )
 
 func Start() {
-	SetupHistory()
+	histfile := os.Getenv("HISTFILE")
+	if histfile == "" {
+		histfile = "/tmp/my_shell_history.tmp"
+	}
 	rl, err := readline.NewEx(&readline.Config{
 		Prompt:          "$ ",
 		InterruptPrompt: "^C",
 		EOFPrompt:       "exit",
 		AutoComplete:    &builtinCompleter{},
-		// HistoryFile:  "/tmp/my_shell_history.tmp",
+		HistoryFile:     histfile,
 	})
 	if err != nil {
 		fmt.Println("Failed to initialize readline:", err)
