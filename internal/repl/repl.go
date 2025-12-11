@@ -42,4 +42,5 @@ func Start() {
 		}
 		exec.Run(command)
 	}
+	UpdateHistory()
 }

@@ -99,9 +99,9 @@ func doHistory(args []string) bool {
 		case "-r":
 			ReadHistory(path)
 		case "-w":
-			writeHistory(path)
+			WriteHistory(path)
 		case "-a":
-			appendHistory(path)
+			AppendHistory(path)
 		default:
 			fmt.Println("history: invalid option:", flag)
 		}

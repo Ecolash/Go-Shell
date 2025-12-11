@@ -40,7 +40,7 @@ func ReadHistory(path string) {
 	}
 }
 
-func writeHistory(path string) {
+func WriteHistory(path string) {
 	f, err := os.Create(path)
 	if err != nil {
 		fmt.Println("history: cannot write file:", path)
@@ -52,7 +52,7 @@ func writeHistory(path string) {
 	}
 }
 
-func appendHistory(path string) {
+func AppendHistory(path string) {
 	f, err := os.OpenFile(path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Println("history: cannot append file:", path)
