@@ -8,9 +8,18 @@ import (
 	"strings"
 )
 
+// Basic Colors
+const (
+	RESET   = "\033[0m"
+	CYAN    = "\033[36m"
+	GREEN   = "\033[32m"
+	YELLOW  = "\033[33m"
+	RED     = "\033[31m"
+	MAGENTA = "\033[35m"
+)
+
 // Foreground colors
 const (
-	RESET      = "\033[0m"
 	FG_DEFAULT = "\033[39m"
 	FG_BLACK   = "\033[30m"
 	FG_RED     = "\033[31m"
@@ -94,25 +103,13 @@ func formatPrompt() string {
 		cwd = "~" + strings.TrimPrefix(cwd, home)
 	}
 
-	// Colors
-	const (
-		RESET   = "\033[0m"
-		CYAN    = "\033[36m"
-		GREEN   = "\033[32m"
-		YELLOW  = "\033[33m"
-		RED     = "\033[31m"
-		MAGENTA = "\033[35m"
-	)
-
 	// Icons (require Nerd Font; harmless if unsupported)
 	folderIcon := "" // nf-fa-folder
 	gitIcon := " "   // nf-dev-git_branch
 	arrowIcon := ">"
 
-	// Git branch info
 	branch, dirty := getGitInfo(".")
 	gitPart := ""
-
 	if branch != "" {
 		if dirty {
 			gitPart = fmt.Sprintf(" %s%s*%s", gitIcon, YELLOW+branch, RESET)
