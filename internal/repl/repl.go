@@ -15,6 +15,7 @@ func Start() {
 	if histfile == "" {
 		histfile = "/tmp/my_shell_history.tmp"
 	}
+	SetupHistory()
 	rl, err := readline.NewEx(&readline.Config{
 		Prompt:          "$ ",
 		InterruptPrompt: "^C",
