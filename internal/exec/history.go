@@ -8,6 +8,7 @@ import (
 )
 
 var ShellHistory []string
+var lastAppendIndex int
 
 func printHistory(n int) {
 	if n < 0 {
@@ -58,7 +59,8 @@ func appendHistory(path string) {
 		return
 	}
 	defer f.Close()
-	for _, line := range ShellHistory {
-		_, _ = fmt.Fprintln(f, line)
+	for i := lastAppendIndex; i < len(ShellHistory); i++ {
+		_, _ = fmt.Fprintln(f, ShellHistory[i])
 	}
+	lastAppendIndex = len(ShellHistory)
 }
