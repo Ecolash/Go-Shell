@@ -5,25 +5,27 @@ import (
 )
 
 const (
-	BuiltinCD    = "cd"
-	BuiltinExit  = "exit"
-	BuiltinPWD   = "pwd"
-	BuiltinEcho  = "echo"
-	BuiltinSet   = "set"
-	BuiltinUnset = "unset"
-	BuiltinEnv   = "env"
-	BuiltinType  = "type"
+	BuiltinCD      = "cd"
+	BuiltinExit    = "exit"
+	BuiltinPWD     = "pwd"
+	BuiltinEcho    = "echo"
+	BuiltinHistory = "history"
+	BuiltinSet     = "set"
+	BuiltinUnset   = "unset"
+	BuiltinEnv     = "env"
+	BuiltinType    = "type"
 )
 
 var Builtins = map[string]bool{
-	BuiltinCD:    true,
-	BuiltinExit:  true,
-	BuiltinPWD:   true,
-	BuiltinEcho:  true,
-	BuiltinSet:   true,
-	BuiltinUnset: true,
-	BuiltinEnv:   true,
-	BuiltinType:  true,
+	BuiltinCD:      true,
+	BuiltinExit:    true,
+	BuiltinPWD:     true,
+	BuiltinEcho:    true,
+	BuiltinHistory: true,
+	BuiltinSet:     true,
+	BuiltinUnset:   true,
+	BuiltinEnv:     true,
+	BuiltinType:    true,
 }
 
 func builtin(cmd *parser.Command) bool {
@@ -36,6 +38,8 @@ func builtin(cmd *parser.Command) bool {
 		return doExit(cmd.Args)
 	case BuiltinType:
 		return doType(cmd.Args)
+	case BuiltinHistory:
+		return doHistory(cmd.Args)
 	case BuiltinPWD:
 		return doPwd(cmd.Args)
 	}

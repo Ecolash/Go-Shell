@@ -24,6 +24,8 @@ func Start() {
 	defer rl.Close()
 	for {
 		input, err := rl.Readline()
+		exec.ShellHistory = append(exec.ShellHistory, input)
+
 		if err != nil { // EOF or Ctrl+C
 			break
 		}

@@ -86,3 +86,11 @@ func doCd(args []string) bool {
 	}
 	return true
 }
+
+func doHistory(args []string) bool {
+	if len(args) == 0 {
+		printHistory()
+		return true
+	}
+	return false
+}
