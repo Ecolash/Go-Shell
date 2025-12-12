@@ -133,9 +133,9 @@ The codebase is thoughtfully organized to make adding new features straightforwa
 
 ```sh
 pwd
-cd /tmp && echo "hello" > out.txt
+cd /tmp
+echo "hello" > out.txt
 echo append >> out.txt
-env | grep HOME
 type cd
 history
 exit 0
